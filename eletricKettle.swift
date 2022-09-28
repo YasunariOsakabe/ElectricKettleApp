@@ -20,6 +20,7 @@ import PlaygroundSupport // Playground上でTimerクラスを機能させるた�
 //ケトルの水が入っていない→空焚き防止機能が動作→加熱開始しないように
 //
 //3段階の温度調整 - 上限温度がそれぞれ変わるように（それぞれ50度、80度、90度で加熱が終わるように）
+
 //ケトルの水量が1Lの状態と仮定して、実装
 //ケトルの水量によって加熱時間が速くなったり、遅くなったりする処理も余裕があれば実装
 //水量は引数として渡すように
@@ -32,24 +33,18 @@ class ElectricKettle {
     var temperature = 0 //現在の温度
     
     //3段階の温度調節
-    enum selectMode {
+    enum TemperatureMode {
         case temperatureFifty
         case temperatureEighty
         case temperatureNinety
     }
-
-
-    //注水メソッド
-    func injectionWater() {
-        print("水量は\(warterStrage)mlです")
-
-    }
-
+    
+    
     //スタートメソッド
-    func start(type: selectMode) {
+    func start(type: TemperatureMode) {
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(heatingStart), userInfo: nil, repeats: true)
-        injectionWater()
-        switch type.self {
+        print("水量は\(warterStrage)mlです")
+        switch type {
         case .temperatureFifty:
             print("設定温度:50度に設定しました")
             limitTemperature = 50
@@ -60,13 +55,13 @@ class ElectricKettle {
             print("設定温度:90度に設定しました")
             limitTemperature = 90
         }
-
+        
         if warterStrage <= 0 {  //注水量が0だった場合は空焚き防止メソッドへ
             emptyFiring()//空焚き防止メソッドへ
         }
-
+        
     }
-
+    
     //加熱開始
     @objc func heatingStart() {
         temperature += 2 //2度ずつ温度上昇
@@ -77,13 +72,13 @@ class ElectricKettle {
         }
     }
 
-
+    
     //加熱ストップメソッド
     func stop() {
         timer?.invalidate()
         print("カチッ！（\(temperature)度に到達。加熱をストップしました）")
     }
-
+    
     //空焚き防止機能メソッド
     func emptyFiring() {
         timer?.invalidate()
